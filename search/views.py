@@ -3,7 +3,7 @@ import pickle
 
 from django.http import HttpResponse
 from django.views.generic.base import View
-from search.models import Lagou
+from search.models import Lagou, ZhihuQuestion
 import redis
 from django.shortcuts import render
 from django.utils.datastructures import OrderedSet
@@ -37,7 +37,7 @@ class SearchSuggest(View):
         if current_type == 'question':
             return_suggest_list = []
             if keywords:
-                s = Lagou.search()
+                s = ZhihuQuestion.search()
                 s = s.suggest("my_suggest", keywords, completion={
                     "field": "suggest",
                     "fuzzy": {
@@ -149,6 +149,58 @@ class SearchView(View):
                     }
                 }
             )
+        elif s_type == 'question':
+            response_dict = {"question": client.search(
+                index="zhihu_question",
+                request_timeout=60,
+                body={
+                    "query": {
+                        "multi_match": {
+                            "query": key_words,
+                            "fields": [
+                                "title",
+                                "content",
+                                "topics"
+                            ]
+                        }
+                    },
+                    "from": (page - 1) * 10,
+                    "size": 10,
+                    "highlight": {
+                        "pre_tags": ['<span class="keyword">'],
+                        "post_tags": ['</span>'],
+                        "fields": {
+                            "title": {},
+                            "content": {},
+                            "topics": {}
+                        }
+                    }
+                }
+            ), "answer": client.search(
+                index="zhihu_answer",
+                request_timeout=60,
+                body={
+                    "query": {
+                        "multi_match": {
+                            "query": key_words,
+                            "fields": [
+                                "content",
+                                "author_name"
+                            ]
+                        }
+                    },
+                    "from": (page - 1) * 10,
+                    "size": 10,
+                    "highlight": {
+                        "pre_tags": ['<span class="keyword">'],
+                        "post_tags": ['</span>'],
+                        "fields": {
+                            "content": {},
+                            "author_name": {}
+                        }
+                    }
+                }
+            )}
         end_time = datetime.now()
         last_seconds = (end_time - start_time).total_seconds()
 
@@ -181,6 +233,39 @@ class SearchView(View):
                     hit_dict['company_name'] = hit['_source']['company_name']
                     hit_dict['source_site'] = "拉勾网"
                     hit_list.append(hit_dict)
+        elif s_type == 'question':
+            for hit in response_dict['question']['hits']['hits']:
+                hit_dict_question = {}
+                if "title" in hit["highlight"]:
+                    hit_dict_question["title"] = "". join(hit["highlight"]["title"])
+                else:
+                    hit_dict_question['title'] = hit["_source"]["title"]
+                if "content" in hit["highlight"]:
+                    hit_dict_question["content"] = "". join(hit["highlight"]["content"])
+                else:
+                    hit_dict_question['content'] = hit["_source"]["content"]
+                hit_dict_question['create_date'] = hit["_source"]["crawl_time"]
+                hit_dict_question['url'] = hit["_source"]["url"]
+                hit_dict_question['score'] = hit["_score"]
+                hit_dict_question['source_site'] = "知乎问题"
+                hit_list.append(hit_dict_question)
+            for hit in response_dict['answer']['hits']['hits']:
+                hit_dict_answer = {}
+                if "author_name" in hit["highlight"]:
+                    hit_dict_answer["author_name"] = "".join(hit["highlight"]["author_name"])
+                else:
+                    hit_dict_answer['author_name'] = hit["_source"]["author_name"]
+                if "content" in hit["highlight"]:
+                    hit_dict_answer["content"] = "".join(hit["highlight"]["content"])
+                else:
+                    hit_dict_answer['content'] = hit["_source"]["content"]
+                hit_dict_answer['create_date'] = hit["_source"]['create_time']
+                hit_dict_answer['url'] = hit["_source"]['url']
+                hit_dict_answer['score'] = hit["_score"]
+                hit_dict_answer['source_site'] = "知乎回答"
+                hit_list.append(hit_dict_answer)
+            response_dict['question']["hits"]["total"]['value'] = response_dict['question']['hits']['total']['value'] + response_dict['answer']['hits']['total']['value']
+            response = response_dict["question"]
         total_nums = int(response['hits']['total']['value'])
 
         # 计算总页数

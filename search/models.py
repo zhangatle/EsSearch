@@ -30,3 +30,45 @@ class Lagou(Document):
           "number_of_shards": 2,
           "number_of_replicas": 0
         }
+
+
+# 知乎提问的elasticsearch的index索引定义
+class ZhihuQuestion(Document):
+    suggest = Completion(analyzer='ik_max_word')
+    title = Text(analyzer='ik_max_word')
+    url = Keyword()
+    content = Text(analyzer='ik_max_word')
+    topics = Text(analyzer='ik_max_word')
+    crawl_time = Date()
+    answer_num = Integer()
+    comments_num = Integer()
+    follow_num = Integer()
+    view_num = Integer()
+
+    class Index:
+        name = 'zhihu_question'
+        settings = {
+          "number_of_shards": 2,
+          "number_of_replicas": 0
+        }
+
+
+# 知乎回答的elasticsearch的index索引定义
+class ZhihuAnswer(Document):
+    suggest = Completion(analyzer='ik_max_word')
+    url = Keyword()
+    question_id = Keyword()
+    author_id = Keyword()
+    content = Text(analyzer='ik_max_word')
+    approve_num = Integer()
+    comments_num = Integer()
+    create_time = Date()
+    update_time = Date()
+    crawl_time = Date()
+
+    class Index:
+        name = 'zhihu_answer'
+        settings = {
+          "number_of_shards": 2,
+          "number_of_replicas": 0
+        }
