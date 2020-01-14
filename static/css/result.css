@@ -59,8 +59,8 @@ html{*overflow:auto;}
 .resultArea .resultList .resultItem{margin-bottom:20px;}
 .resultArea .resultList .resultItem{margin-bottom:30px;}
 .resultArea .resultList .itemHead{margin-bottom:5px;color:#767676;} 
-.resultArea .resultList .itemHead .keyWord{color:#d90909;}
-.resultArea .resultList .itemBody .keyWord{color:#d90909;}
+.resultArea .resultList .itemHead .keyword{color:#d90909;}
+.resultArea .resultList .itemBody .keyword{color:#d90909;}
 .resultArea .resultList .itemHead a.title{font-size:16px;color:#0080cc;text-decoration:underline;}
 .resultArea .resultList .itemHead .value{color:#41D1B4;}
 .resultArea .resultList .itemHead .divsion{margin:0 5px;}

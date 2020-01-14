@@ -17,7 +17,7 @@ html{*overflow:auto;}
 .subfield{border-left:4px solid #9cc813;font-size:14px;font-weight:bold;padding:2px 0 2px 20px;}
 .subfieldContent{padding-left:140px;padding-bottom:40px;}
 .subfieldContent .advanceItem{padding-left:350px;margin-bottom:15px;padding-top:8px;padding-bottom:3px;}
-.subfieldContent .advanceItem.keyWords{background:#f4f4f4;padding-top:18px;padding-bottom:3px;}
+.subfieldContent .advanceItem.keyword{background:#f4f4f4;padding-top:18px;padding-bottom:3px;}
 .subfieldContent .advanceItem dd{float:left;margin-left:-320px;}
 .subfieldContent .advanceItem dd label{float:left;margin-right:40px;width:75px;font-weight:bold;}
 .subfieldContent .advanceItem dd .impInfo{ font-weight:bold;}
@@ -26,7 +26,7 @@ html{*overflow:auto;}
 .subfieldContent .advanceItem dt p input[type=text]{position:relative;top:-5px;line-height:26px;}
 
 .subfieldContent .advanceItem dt{float:left;width:100%;}
-.subfieldContent .advanceItem.keyWords dt input[type=text]{width:290px;height:26px;border:1px solid #bfbfbf;outline:none;}
+.subfieldContent .advanceItem.keyword dt input[type=text]{width:290px;height:26px;border:1px solid #bfbfbf;outline:none;}
 /*自定义*/
 .subfieldContent .advanceItem.time{height:30px;}
 .subfieldContent .advanceItem .define{display:none;position:relative;*top:-3px;}

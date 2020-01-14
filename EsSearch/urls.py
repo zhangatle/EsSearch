@@ -16,11 +16,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, re_path
 from django.views.generic import TemplateView
-from search.views import SearchSuggest, IndexView
+from search.views import SearchSuggest, IndexView, SearchView, favicon_view
 
 urlpatterns = [
+    #path('favicon.ico', favicon_view),
     path('admin/', admin.site.urls),
     path('', IndexView.as_view(), name='index'),
-    re_path(r'^suggest$', SearchSuggest.as_view(), name='suggest'),
-    re_path(r'^search$', TemplateView.as_view(template_name='result.html'), name='search'),
+    path('suggest/', SearchSuggest.as_view(), name="suggest"),
+    path('search/', SearchView.as_view(), name="search"),
 ]
